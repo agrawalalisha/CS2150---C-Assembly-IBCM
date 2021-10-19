@@ -1,0 +1,60 @@
+C00C 000	jmp	start	skip around variables
+0000 001 i	dw	0	index
+0000 002 temp	dw	0	temp variable
+0040 003 a	dw	40	int array[] address
+0000 004 n	dw	0	size of array
+0000 005 zero	dw	0	
+0001 006 one	dw	1
+4000 007 strit	dw	4000
+3000 008 ldit	dw	3000
+0000 009
+0000 00A
+0000 00B
+1000 00C start	readH		input for size
+4004 00D 	store	n	
+3005 00E	load	zero	i=0
+4001 00F	store	i
+3004 010 loop	load	n	if (i >= N) goto fwd
+6001 011	sub	i	
+E01F 012	jmpl	fwd
+D01F 013	jmpe	fwd	
+3007 014	load	strit	form the instruction to store a[i]
+5003 015	add	a	
+5001 016	add	i		
+401A 017	store	doit	put intstruction in program
+1000 018	readH
+4002 019	store	temp
+0000 01A doit   dw	0
+3001 01B	load	i	i++
+5005 01C	add	one	
+4001 01D	store	i	
+C010 01E	jmp	loop	goto loop
+3005 01F	load	zero	i = 0
+4001 020	store	i	
+3004 021 fwd	load	n	if (i >= N) goto bkwd
+6001 022	sub	i	
+E02F 023	jmpl	bkwd
+D02F 024	jmpe	bkwd	
+3008 025	load	ldrit	form the instruction to load a[i]
+5003 026	add	a
+5001 027	add	i	
+4029 028	store	doit1	put instruction in program
+0000 029 doit1	dw	0
+1800 02A	printH		prints forward
+3001 02B	load	i	i++
+5006 02C	add	one
+4001 02D	store	i	
+C021 02E	jmp	fwd	goto fwd
+3001 02F bkwd 	load	i	if (i<0)goto xit
+D03B 030 	jmpl	xit			
+3001 031	load	i	i--
+6006 032	sub	one		
+4001 033	store	i
+3008 034	load	ldrit	form the instruction to load a[i]
+5003 035	add	a	
+5001 036	add	i	
+4038 037	store	doit2	put the instruction into program
+0000 038 doit2	dw	0	
+1800 039	printH		print backwards
+C02F 03A	jmp	loop	goto bkwd
+0000 03B xit	halt		

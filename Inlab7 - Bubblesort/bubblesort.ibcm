@@ -1,0 +1,96 @@
+C00E 000	jmp	start	skip around variables
+0000 001 i	dw	0	int i
+0000 002 temp	dw	0	temp
+0060 003 a	dw	60	int a[] address
+000A 004 n	dw	A	array size
+0000 005 zero	dw	0
+0001 006 one	dw	1
+4000 007 strit	dw	4000	store w/o address
+3000 008 ldit	dw	3000	load w/o address
+0009 009 j	dw	9	10 - 1
+0000 00A prev	dw	0	prev value to compare
+0000 00B curr	dw	0	current val to compare
+0000 00C p	dw	0	iterator for printing
+4004 00D
+3005 00E start	load	zero	i=0
+4001 00F 	store	i
+3004 010 loop	load	n	if(i>=N)goto fwd
+6001 011 	sub	i
+E01E 012	jmpl	sort
+D01E 013	jmpe	sort
+3007 014	load	strit	form the instruction to store a[i]
+5003 015	add	a
+5001 016	add	i
+4019 017	store	doit
+1000 018	readH
+0000 019 doit	dw	0
+3001 01A 	load	i	i++
+5006 01B	add	one
+4001 01C	store	i
+C010 01D	jmp	loop	goto loop
+3005 01E	load	zero	i=0
+4001 01F	store	i
+3004 020 sort	load	n	if(i>=N)goto xit
+6001 021 	sub	i
+E051 022	jmpl	print
+D051 023	jmpe	print
+3009 024 loop2	load	j	if(j<=i)goto xit2
+6001 025 	sub	i
+E04A 026	jmpl	xit2
+D04A 027	jmpe	xit2
+3008 028	load	ldrit	form the instruction to load a[j]
+5003 029	add	a
+5009 02A	add	j
+402C 02B	store	doit1	put instr into program
+0000 02C doit1	dw	0
+400B 02D 	store	curr	curr = a[j]
+3008 02E	load	ldrit	form the instruction to load a[j-1]
+5003 02F	add	a
+5009 030	add	j
+6006 031	sub	one	j--
+4033 032	store	doit2	put instr into program
+0000 033 doit2	dw	0
+400A 034 	store	prev	prev = a[j-1]
+300A 035	load	prev	if(a[j] >= a[j-1)goto xit3
+600B 036	sub	curr	a[j-1] - a[j]
+E046 037	jmpl	xit3
+D046 038	jmpe	xit3
+3007 039	load	strit	form the instruction to store a[j]
+5003 03A	add	a
+5009 03B	add	j
+403E 03C	store	doit3	put instr into program
+300A 03D	load	prev	loads a[j-1]
+0000 03E doit3	dw	0
+3007 03F 	load	strit	form the instruction to store a[j-1]
+5003 040	add	a
+5009 041	add	j
+6006 042	sub	one	j--
+4045 043	store	doit4	put instr into program
+300B 044	load	curr	loads a[j]
+0000 045 doit4	dw	0
+3009 046 xit3	load	j	j--
+6006 047 	sub	one
+4009 048	store	j
+C024 049	jmp	loop2	goto beg of loop2
+3001 04A xit2	load	i	i++
+5006 04B 	add	one
+4001 04C	store	i
+3004 04D	load	n	resets j
+6006 04E	sub	one	j = n-1
+4009 04F	store	j
+C020 050	jmp	sort	goto sort
+3004 051 print	load	n	if(p>=N)
+600C 052 	sub	p
+E05F 053	jmpl	xit
+D05F 054	jmpe	xit
+3008 055	load	ldrit	form the instruction into prog
+5003 056	add	a
+500C 057	add	p
+4059 058	store	doit5	put instr into program
+0000 059 doit5	dw	0
+1800 05A 	printH		prints
+300C 05B	load	p	p++
+5006 05C	add	one
+400C 05D	store	p
+C021 05E	jmp	fwd	goto print
+0000 05F xit	halt
